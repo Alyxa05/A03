@@ -49,9 +49,11 @@ int getConfirmation(const char *input) {
     regex_t regex;
     char buffer[100];
 
-    // Note: <regex.h> is a POSIX standard and may not be available on all compilers,
-    // especially the default MSVC compiler on Windows.
-    // Compile regex to match 'y' or 'n' case-insensitively, anchored to the start and end of the string.
+    // Note: <regex.h> is a POSIX standard. To compile on Windows, you'll need a
+    // POSIX-compliant compiler like GCC (via MinGW-w64 or WSL), as the
+    // default MSVC compiler does not support it.
+
+    // Compile regex to match only 'y' or 'n' case-insensitively.
     if (regcomp(&regex, "^[yn]$", REG_EXTENDED | REG_ICASE)) {
         fprintf(stderr, "Could not compile regex\n");
         exit(1);
@@ -60,14 +62,14 @@ int getConfirmation(const char *input) {
     while (1) {
         printf("%s", input);
         if (fgets(buffer, sizeof(buffer), stdin)) {
-            // Remove trailing newline character
+            // Remove trailing newline character from fgets
             buffer[strcspn(buffer, "\n")] = 0;
 
             // Check if the input string matches the regular expression
-            if (regexec(&regex, buffer, 0, NULL, 0) == 0) {
+            if (regexec(&regex, buffer, 0, NULL, 0) == 0) { // 0 indicates a match
                 char response = tolower(buffer[0]);
-                regfree(&regex); // Free the compiled regex
-                return (response == 'y'); // Return true (1) if 'y' or 'Y', false (0) otherwise.
+                regfree(&regex); // Free the compiled regex before returning
+                return (response == 'y'); // Return 1 if 'y', 0 if 'n'
             }
         }
         printf("Invalid input, please enter 'y' or 'n'.\n");
