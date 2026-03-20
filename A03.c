@@ -1,6 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 // Pizza bill and tip splitter with service rating
+// Created by Alyx Deland 20/01/2026
+// Rev Hist: 
+// A01: Inital program
+// A02: Added data logging and memory allocation
+// A03: Better input validation, more pointers
 
 // Function for tip and tax calculation
 float math(float a, float b) {
