@@ -93,7 +93,7 @@ int main() {
 
     // Function/ File pointers
     int (*i_ptr)(const char *, int) = getInt;
-    float (*f_ptr)(const char *, float) = getFloat;
+    float (*f_ptr)(const char *, int) = getFloat;
     float (*m_ptr)(float, float) = math;
     FILE *log_file = NULL;
 
