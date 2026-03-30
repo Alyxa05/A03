@@ -12,7 +12,7 @@ float math(float a, float b) {
     return (a * b) + a;
 }
 
-// Function to Validate ints and floats
+// Functions to Validate ints and floats
 int getInt(const char *input, int max) {
     int value;
     while (1) {
@@ -27,7 +27,7 @@ int getInt(const char *input, int max) {
             } else {
                 // Input is an integer but outside the desired range
                 if (value <= 0) {
-                    printf("Number too low (must be 0 or greater), please try again.\n");
+                    printf("Number too low, please try again.\n");
                 } else { // value > max
                     printf("Number too high (must be %d or less), please try again.\n", max);
                 }
@@ -40,20 +40,19 @@ int getInt(const char *input, int max) {
     }
 }
 
-// Function to validate floats, identical to getInt aside from float data type
+// Function to validate floats, identical to getInt save for float data type
+// Float data type used because double precission is not necessary for this program
 float getFloat(const char *input, int max) {
     float value;
     while (1) {
         printf("%s", input);
-
         if (scanf("%f", &value) == 1) {
             while (getchar() != '\n');
-
             if (value > 0 && value <= max) {
                 return value;
             } else {
                 if (value <= 0) {
-                    printf("Number too low (must be 0 or greater), please try again.\n");
+                    printf("Number too low, please try again.\n");
                 } else {
                     printf("Number too high (must be %.2f or less), please try again.\n", max);
                 }
@@ -77,6 +76,9 @@ void log_split(FILE **fp, int tables_served, float table_total, int num_customer
     }
     // Log data to the file
     fprintf(*fp, "Table: %d, Table Total: %.2f, Size: %d, Tip: %.2f, Per person: %.2f\n", tables_served, table_total, num_customers, all_tips, base_split);
+    // Matches assignment 1 spec, names are altered to
+    // better align with SET coding standards' naming conventions
+    // and to work with my program's variables
 }
 
 // Main function
@@ -105,7 +107,7 @@ int main() {
         int num_customers;
         while (1) {
             // Maximum allowed number of customers at a table is 8, 
-            // and minimum number of customers is 3, as per company policy
+            // and minimum number of customers is 3, as per assignment 1 spec
             num_customers = i_ptr("Number of customers at the table (3-8): ", 8);
             if (num_customers < 3) {
                 printf("There is a minimum of 3 customers required per table.\n");
@@ -124,8 +126,8 @@ int main() {
         if (customer_totals == NULL) {
             printf("Error: Memory allocation failed. Exiting.\n");
             if(log_file != NULL) {
-                fclose(log_file);
-            }
+                fclose(log_file); 
+            } // Close the log file if memory allocation fails and the file is open, then end the program
             return 1;
         }
         float table_total = 0;
@@ -160,7 +162,8 @@ int main() {
             all_tips += tip_amount;
         }
 
-        // Service rating
+        // Service rating, currently set as 1-5, 1-3 can easily be implemented  
+        // if necessary though 1-5 is the standard for the industry
         int rating = getInt("How would you rate the service today? (1-5 stars): ", 5);
 
         // Calculate the total number of "stars" for this shift (used for average rating)
@@ -170,12 +173,12 @@ int main() {
         // Increment the number of tables served
         tables_served++;
 
-        // Table's bill summary
+        // Table's bill summary print statements
         printf("\nTable Total: $%.2f\n", table_total);
         printf("Service Rating: %d\n", rating);
         printf("------------------------------\n");
         printf("Customer Totals:\n");
-        // Print each customer's total
+        // Print each customer's total, iteratively
         for (int i = 0; i < num_customers; i++) {
             printf("Customer %d Total: $%.2f\n", i + 1, customer_totals[i]);
         }
@@ -194,16 +197,17 @@ int main() {
                 // Clear the rest of the input buffer.
                 while (getchar() != '\n');
                 if (next_table == 'y' || next_table == 'Y') {
-                    break;
+                    break; // If y or Y are inputed, break this loop and restart the main loop
                 } else if (next_table == 'n' || next_table == 'N') {
                     next_table = 'n';
-                    break;
+                    break; // if n or N are inputed, set next_table as
+                    // n to break the main loop, and break this loop
                 } else {
-                    printf("Invalid input, please try again.\n");
+                    printf("Invalid input, please try again.\n"); 
                 }
             } else {
                 printf("Invalid input, please try again.\n");
-            }
+            } // If anything other than y/Y/n/N is inputted, throw an error and retry
         }
     }
     
@@ -214,32 +218,28 @@ int main() {
     
     // Only calculate and display the summary if at least one table was served.
     if (tables_served > 0) {
+        // Init extra, calculate the staffer's average rating across tables this shift
+        // Deduct 30% from shift total so restaurant makes some money too
         float extra = 0;
         float average_rating = total_rating / tables_served;
-        // Calculate bonus if the average rating is high enough
+        float staff_total = shift_total * 0.7;
+        // Calculate bonus if the average rating is high enough, 0 if not high enough
         if (average_rating >= 4) {
-            extra = shift_total * shift_bonus;
+            extra = staff_total * shift_bonus;
         } else {
             extra = 0;
         }
-        float take_home = shift_total + extra;
-        // End of shift display
+        // Calculate the staffer's take home amount
+        float take_home = staff_total + extra;
+        // End of shift display statements
         printf("\n\n--- SHIFT SUMMARY ---");
         printf("\nTables Served: %d", tables_served);
-        if (average_rating >= 4) {
-            printf("\nBase Revenue: $%.2f", shift_total);
+        if (average_rating >= 4) { 
+            // If the average rating is above a given value,
+            // add these two lines to the summary
+            printf("\nBase Revenue: $%.2f", staff_total);
             printf("\nBonus: $%.2f", extra);
-        } else {
+        } else { // If not, add this line to the summary
             printf("\nNo Bonus earned.");
         }
-        printf("\nTotal Income: $%.2f", take_home);
-        printf("\nAverage Rating: %.1f / 5 stars\n", average_rating);
-    } else {
-        printf("\nNo tables were served.\n");
-    }
-
-    printf("\nPress Enter to exit...");
-    getchar();
-
-    return 0;
-}
+ 
