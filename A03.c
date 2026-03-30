@@ -193,7 +193,10 @@ int main() {
             if (scanf(" %c", &next_table) == 1) {
                 // Clear the rest of the input buffer.
                 while (getchar() != '\n');
-                if (next_table == 'y' || next_table == 'n' || next_table == 'Y' || next_table == 'N') {
+                if (next_table == 'y' || next_table == 'Y') {
+                    break;
+                } else if (next_table == 'n' || next_table == 'N') {
+                    next_table = 'n';
                     break;
                 } else {
                     printf("Invalid input, please try again.\n");
@@ -220,22 +223,23 @@ int main() {
             extra = 0;
         }
         float take_home = shift_total + extra;
-        if (next_table == 'n' || next_table == 'N') {
-            // End of shift display
-            printf("\n\n--- SHIFT SUMMARY ---");
-            printf("\nTables Served: %d", tables_served);
-            if (average_rating >= 4) {
-                printf("\nBase Revenue: $%.2f", shift_total);
-                printf("\nBonus: $%.2f", extra);
-            } else {
-                printf("\nNo Bonus earned.");
-            }
-            printf("\nTotal Income: $%.2f", take_home);
-            printf("\nAverage Rating: %.1f / 5 stars\n", average_rating);
+        // End of shift display
+        printf("\n\n--- SHIFT SUMMARY ---");
+        printf("\nTables Served: %d", tables_served);
+        if (average_rating >= 4) {
+            printf("\nBase Revenue: $%.2f", shift_total);
+            printf("\nBonus: $%.2f", extra);
+        } else {
+            printf("\nNo Bonus earned.");
         }
+        printf("\nTotal Income: $%.2f", take_home);
+        printf("\nAverage Rating: %.1f / 5 stars\n", average_rating);
     } else {
         printf("\nNo tables were served.\n");
     }
+
+    printf("\nPress Enter to exit...");
+    getchar();
 
     return 0;
 }
